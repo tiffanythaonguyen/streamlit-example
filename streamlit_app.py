@@ -1,56 +1,61 @@
 import streamlit as st
 import pandas as pd
-from transformers import BartForConditionalGeneration, BartTokenizer
+import PyPDF2
+from io import BytesIO
 
-# Initialize the BART summarizer and tokenizer
-model = BartForConditionalGeneration.from_pretrained('facebook/bart-large-cnn')
-tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-cnn')
+def extract_content_from_file(file):
+    """
+    Extracts content from various file types and returns them.
+    """
+    if '.csv' in file.name:
+        df = pd.read_csv(file)
+        return df
 
-def get_data(data):
-    content = ""
-    if '.csv' in data.name:
-        df = pd.read_csv(data)
-        content = '\n'.join(df.head().apply(lambda x: ', '.join(x.dropna().astype(str)), axis=1))
-    elif '.pdf' in data.name:
-        # Extract text using PyPDF2 or your preferred method
-        content = "PDF text extraction not implemented here."  # Placeholder
-    elif '.xlsx' in data.name:
-        df = pd.read_excel(data, engine='openpyxl')
-        content = '\n'.join(df.head().apply(lambda x: ', '.join(x.dropna().astype(str)), axis=1))
-    return content
+    elif '.xlsx' in file.name:
+        df = pd.read_excel(file, engine='openpyxl')
+        return df
 
-def generate_questions(content):
-    # Basic heuristic: Extract key sentences and turn them into questions
-    # This is a simple example and might not work perfectly on all content
-    sentences = content.split('. ')
-    questions = []
+    elif '.pdf' in file.name:
+        pdf_reader = PyPDF2.PdfFileReader(file)
+        text = ""
+        for page_num in range(pdf_reader.numPages):
+            text += pdf_reader.getPage(page_num).extractText()
+        return text
 
-    for sentence in sentences:
-        if " is " in sentence:
-            questions.append(sentence.replace(" is ", " is what? "))
-        elif " are " in sentence:
-            questions.append(sentence.replace(" are ", " are what? "))
-        elif " have " in sentence:
-            questions.append(sentence.replace(" have ", " have what? "))
-
-    # Return the first three questions, or fewer if not enough were generated
-    return questions[:3]
+    return None
 
 def main():
     st.title("FinanceEconTool")
+    st.subheader("Upload your class files for data collection and processing.")
+
+    # Class Selection
+    class_option = st.selectbox(
+        "Which class does this file pertain to?",
+        ["Math for Finance and Analytics with R", "Analytics for Finance", "Database Management Systems - SQL", 
+         "Data Science with Python", "Econometrics"]
+    )
     
-    class_option = st.selectbox("Choose your class:", ["Math for Finance and Analytics with R", "Analytics for Finance", "Database Management Systems - SQL", "Data Science with Python", "Econometrics"])
-    
-    uploaded_files = st.file_uploader("Upload your class notes or materials", type=['csv', 'xlsx', 'pdf'], accept_multiple_files=True)
-    
+    uploaded_files = st.file_uploader("Upload Files", type=['csv', 'xlsx', 'pdf'], accept_multiple_files=True)
+
     if uploaded_files:
-        for uploaded_file in uploaded_files:
-            content = get_data(uploaded_file)
-            st.write(f"### Questions for file: {uploaded_file.name}")
-            questions = generate_questions(content)
-            for q in questions:
-                st.write("- " + q)
+        if st.button("Process Files"):
+            for file in uploaded_files:
+                st.subheader(f"Content from {file.name}")
+                content = extract_content_from_file(file)
+                
+                if isinstance(content, pd.DataFrame):
+                    st.write(content.head())  # Display the top rows of the dataframe
+
+                elif isinstance(content, str):
+                    st.text_area("PDF Content", content, height=300)
+
+                else:
+                    st.write("Unsupported file format or empty content.")
+
+                # If you want to see basic statistics from CSV or Excel files
+                if isinstance(content, pd.DataFrame):
+                    st.subheader(f"Data Statistics for {file.name}")
+                    st.write(content.describe())
 
 if __name__ == '__main__':
     main()
-

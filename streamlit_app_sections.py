@@ -30,31 +30,3 @@ with st.echo("below"):
     add_page_title()  # Optional method to add title and icon to current page
     # Also calls add_indentation() by default, which indents pages within a section
 
-
-"## Alternative approach, using a config file"
-
-"Contents of `.streamlit/pages_sections.toml`"
-
-st.code(Path(".streamlit/pages_sections.toml").read_text(), language="toml")
-
-"Streamlit script:"
-
-with st.echo("below"):
-    from st_pages import show_pages_from_config
-
-    show_pages_from_config(".streamlit/pages_sections.toml")
-
-"See more at https://github.com/blackary/st_pages"
-
-with st.expander("Show documentation"):
-    from st_pages import add_indentation
-
-    st.help(show_pages)
-
-    st.help(Page)
-
-    st.help(add_page_title)
-
-    st.help(Section)
-
-    st.help(add_indentation)

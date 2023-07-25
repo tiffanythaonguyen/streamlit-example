@@ -2,5 +2,5 @@ streamlit
 numpy
 pandas
 statsmodels
-tabula-py
+PyPDF2
 openpyxl

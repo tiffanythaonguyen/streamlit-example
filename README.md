@@ -2,8 +2,6 @@
 
 "FinanceEconTool" is a Streamlit application designed for users interested in finance and economics. It allows users to upload class-related files, processes them, and provides insights on the uploaded content. With support for `.csv` and `.pdf` file formats, this tool not only displays the content but also recommends techniques in Python or R for in-depth financial and economic analysis based on the provided data.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-streamlit-app-link-here)
-
 ## Table of Contents
 
 - [Features](#features)

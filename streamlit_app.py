@@ -7,25 +7,7 @@ import seaborn as sns
 from matplotlib import ticker
 import plotly.graph_objs as go
 
-# Define the function to extract content from various file types and return them
-def extract_content_from_file(file):
-    if '.csv' in file.name:
-        df = pd.read_csv(file)
-        return df
-    elif '.pdf' in file.name:
-        reader = pdfreader.SimplePDFViewer(file)
-        reader.navigate(1)
-        reader.render()
-        text = " ".join(reader.canvas.strings)
-        return text
-    return None
-
-# Define the function to get top technical words from the content
-def get_top_technical_words(text, top_n=10):
-    words = text.split()
-    word_freq = pd.Series(words).value_counts()
-    top_words = word_freq.head(top_n)
-    return top_words
+# ... Existing code ...
 
 # Define the main function for your Streamlit app
 def main():
@@ -60,7 +42,7 @@ def main():
                     # Modify the x-axis ticks
                     ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True, nbins=10))
                     ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
-                    
+
                     st.pyplot(fig)
 
                 # Add other plots here (e.g., Scatter plot, Histogram, Box plot)
@@ -125,3 +107,16 @@ def main():
     st.markdown(
         """
         Based on the data analysis, we recommend focusing on the following areas:
+        - **Quantitative Finance**: This topic appears frequently and might require deeper analysis.
+        - **Financial Modeling**: Consider exploring more resources related to financial modeling techniques.
+        - **Economics**: There is a significant correlation between Finance and Economics. Exploring economics-related topics can provide valuable insights.
+
+        Remember that these are just preliminary insights, and further analysis may reveal more specific areas for investigation.
+        """
+    )
+
+# Rest of the code...
+
+# Run the app when the script is executed
+if __name__ == '__main__':
+    main()

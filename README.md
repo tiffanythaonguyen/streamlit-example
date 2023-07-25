@@ -42,7 +42,7 @@ Tailored advice based on the uploaded data trends, suggesting focus areas, techn
 
 ## Usage
 
-1. Access the web application at this [link](https://your-streamlit-app-link-here).
+1. Access the web application at this [link]([![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://tiffanythaonguyen-streamlit-example-streamlit-app-pia2qx.streamlit.app/).
 2. Follow the UI instructions to upload your files and gather insights.
 
 ## Contact

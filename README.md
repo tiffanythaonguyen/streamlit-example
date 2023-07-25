@@ -1,9 +1,8 @@
 # FinanceEconTool 💼📈🔬
 
-"FinanceEconTool" is a Streamlit application designed for users interested in finance and economics. It allows users to upload class-related files, processes them, and provides insights on the uploaded content. With support for `.csv` and `.pdf` file formats, this tool not only displays the content but also recommends techniques in Python or R for in-depth financial and economic analysis based on the provided data.
+"FinanceEconTool" is an interactive Streamlit application designed for users interested in finance and economics. It empowers users to upload class-related files, processes them, and provides insightful analysis on the uploaded content. With support for both .csv and .pdf file formats, this tool not only displays the content but also recommends advanced techniques in Python or R for in-depth financial and economic analysis based on the provided data.
 
 ## Table of Contents
-
 - [Features](#features)
 - [Dashboard Components](#dashboard-components)
 - [Dependencies](#dependencies)
@@ -11,41 +10,46 @@
 - [Contact](#contact)
 
 ## Features
-
-- **File Uploader**: Supports multiple `.csv` and `.pdf` files.
-- **Content Viewer**: Displays the content of the uploaded files.
-- **Data Statistics**: Provides basic statistics for CSV files.
-- **Data Validation**: Validates data using pandera.
-- **Data Processing**: Structures data into a tidy format for further analysis.
+- **File Uploader**: Supports multiple .csv and .pdf files for seamless data import.
+- **Content Viewer**: Enables users to view the content of the uploaded files.
+- **Data Statistics**: Provides comprehensive statistics and insights for CSV files.
+- **Data Validation**: Ensures data accuracy and quality using pandera.
+- **Data Processing**: Structures data into a tidy format, ready for further analysis.
 
 ## Dashboard Components
-
 ### Summary Insights 📊
+Offers a concise overview of pivotal insights presented using markdown. This section highlights trends, major findings, and relevant statistics.
 
-Brief overview of the most pivotal insights presented using markdown, including trends, major findings, and relevant statistics.
+### Interactive Chart 📉
+![Interactive Chart](placeholder_chart.png)
 
-### Interactive Charts 📉
+Enables users to select data or categories they wish to explore. Provides dynamic visual representations of trends over time, mentions of "Quantitative Finance" vs. "Quantitative Economics", and more. The interactive chart includes mentions of the following courses:
 
-Allows users to select data or categories they wish to delve into. Provides visual representation of trends over time, mentions of "Quantitative Finance" vs. "Quantitative Economics", and more.
+- Finance
+- Economics
+- Financial Modeling
+- Quantitative Finance
+- Data Science
+- Math for Finance and Analytics with R
+- Analytics for Finance
+- Database Management Systems - SQL
+- Data Science with Python
+- Econometrics
 
 ### Recommendations 🔍
-
-Tailored advice based on the uploaded data trends, suggesting focus areas, techniques, and strategies.
+Provides tailored advice based on the uploaded data trends. This section suggests focus areas, techniques, and strategies for in-depth financial and economic analysis.
 
 ## Dependencies
-
-- [Streamlit](https://streamlit.io/)
-- [Pandas](https://pandas.pydata.org/)
-- [pdfreader](https://github.com/maxpmaxp/pdfreader)
-- [pandera](https://pandera.readthedocs.io/)
-- [SciPy](https://www.scipy.org/)
+- Streamlit: Main platform for building the interactive app.
+- Pandas: Data manipulation and analysis library.
+- pdfreader: Library to extract text content from PDF files.
+- pandera: Data validation and schema creation.
+- SciPy: Library for statistical and mathematical functions.
 
 ## Usage
-
-1. Access the web application at this [link]([![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://tiffanythaonguyen-streamlit-example-streamlit-app-pia2qx.streamlit.app/).
-2. Follow the UI instructions to upload your files and gather insights.
+1. Access the web application at this [Streamlit App](https://tiffanythaonguyen-streamlit-example-streamlit-app-pia2qx.streamlit.app/) link.
+2. Follow the user-friendly instructions to upload your files and gather valuable insights.
 
 ## Contact
-
-- **Email**: [Your Email Address](mailto:your.email@example.com)
-- **LinkedIn**: [Your LinkedIn Profile](https://www.linkedin.com/in/your-linkedin-profile/)
+- Email: Your Email Address
+- LinkedIn: Your LinkedIn Profile

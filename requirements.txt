@@ -1,5 +1,6 @@
-streamlit==0.89.0  # You can adjust the version as needed, or remove the version to get the latest one
-pandas==1.3.3     # Adjust the version as necessary
-transformers==4.10.0  # Adjust the version as necessary
-openpyxl==3.0.7   # Adjust the version as necessary
-torch==1.9.1  # This version might change. Visit the official PyTorch website for the latest version.
+streamlit
+numpy
+pandas
+PyPDF2
+statsmodels
+openpyxl

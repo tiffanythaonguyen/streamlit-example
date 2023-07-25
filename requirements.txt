@@ -1,6 +1,7 @@
 streamlit
 numpy
 pandas
-PyPDF2
+pdfreader
 statsmodels
-openpyxl
+pandera
+scipy

@@ -4,38 +4,20 @@ import pdfreader
 from io import BytesIO
 import matplotlib.pyplot as plt
 import seaborn as sns
-from matplotlib import ticker  # Necessary for MaxNLocator
+from matplotlib import ticker
+import plotly.graph_objs as go
 
-def extract_content_from_file(file):
-    """
-    Extracts content from various file types and returns them.
-    """
-    if '.csv' in file.name:
-        df = pd.read_csv(file)
-        return df
+# ... Existing code ...
 
-    elif '.pdf' in file.name:
-        reader = pdfreader.SimplePDFViewer(file)
-        reader.navigate(1)
-        reader.render()
-        text = " ".join(reader.canvas.strings)
-        return text
-
-    return None
-
+# Define the main function for your Streamlit app
 def main():
     st.title("FinanceEconTool 💼📈🔬")
     st.subheader("Upload your class files for data collection and processing 📊💡📚")
 
-    # Class Selection
-    class_option = st.selectbox(
-        "Which class does this file pertain to?",
-        ["Math for Finance and Analytics with R", "Analytics for Finance", "Database Management Systems - SQL", 
-         "Data Science with Python", "Econometrics"]
-    )
+    # ... Existing code ...
 
-    # Sidebar header for Coursework
-    st.sidebar.header("Coursework")
+    # Initialize content with None
+    content = None
 
     # File Uploader
     uploaded_files = st.file_uploader("Upload Files", type=['csv', 'pdf'], accept_multiple_files=True)
@@ -44,28 +26,7 @@ def main():
         for file in uploaded_files:
             # If CSV file
             if '.csv' in file.name:
-                data = pd.read_csv(file)
-                st.write(f"Data overview for {file.name}:")
-                st.write(data.head())
-
-                st.sidebar.header("Visualizations")
-                plot_options = ["Bar plot", "Scatter plot", "Histogram", "Box plot"]
-                selected_plot = st.sidebar.selectbox("Choose a plot type", plot_options)
-
-                if selected_plot == "Bar plot":
-                    x_axis = st.sidebar.selectbox("Select x-axis", data.columns)
-                    y_axis = st.sidebar.selectbox("Select y-axis", data.columns)
-                    st.write("Bar plot:")
-                    fig, ax = plt.subplots()
-                    sns.barplot(x=data[x_axis], y=data[y_axis], ax=ax)
-
-                    # Modify the x-axis ticks
-                    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True, nbins=10))
-                    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
-                    
-                    st.pyplot(fig)
-
-                # ... Add other plots here ...
+                # Existing code...
 
             # If PDF file
             elif '.pdf' in file.name:
@@ -75,25 +36,67 @@ def main():
             else:
                 st.write("Unsupported file format or empty content.")
 
-            # If you want to see basic statistics from CSV files
-            if isinstance(content, pd.DataFrame):
-                st.subheader(f"Data Statistics for {file.name}")
-                st.write(f"Total Number of Rows: {len(content)}")
-                st.write(f"Number of Columns: {len(content.columns)}")
-                st.write(f"Columns: {', '.join(content.columns)}")
-                st.write(f"Data Types:\n{content.dtypes}")
-                st.write(f"Summary Statistics:\n{content.describe()}")
+        # ... Other code ...
 
-            # Summary Dashboard for Insights
-            st.subheader("Summary Dashboard for Insights")
-            if isinstance(content, pd.DataFrame):
-                numeric_columns = content.select_dtypes(include='number').columns
-                st.write(f"Summary Statistics for Numeric Columns:")
-                st.write(content[numeric_columns].describe())
-                st.write(f"Correlation Matrix for Numeric Columns:")
-                st.write(content[numeric_columns].corr())
+        # If you want to see basic statistics from CSV files
+        if isinstance(content, pd.DataFrame):
+            # ... Existing code ...
 
-                st.write(f"Top 10 Key Technical Words:")
+            # Top 10 Key Technical Words
+            if content is not None and isinstance(content, str):
+                top_words = get_top_technical_words(content)
+                st.subheader("Top 10 Key Technical Words")
+                st.write(top_words)
 
+    # Summary Insights
+    st.header("Summary Insights 📊")
+
+    # Example insights (you can replace this with actual insights based on data analysis)
+    st.markdown(
+        """
+        - The data shows a positive correlation between "Finance" and "Economics".
+        - The average word count per document is 1500 words.
+        - The most common topic in the documents is "Financial Modeling".
+        """
+    )
+
+    # Interactive Charts
+    st.header("Interactive Charts 📉")
+
+    # Example chart (you can replace this with actual charts based on data visualization)
+    data = pd.DataFrame({
+        "Topic": ["Finance", "Economics", "Financial Modeling", "Quantitative Finance", "Data Science"],
+        "Frequency": [45, 32, 27, 15, 10]
+    })
+
+    fig = go.Figure(go.Bar(
+        x=data["Topic"],
+        y=data["Frequency"],
+        marker_color='rgb(26, 118, 255)'
+    ))
+
+    fig.update_layout(
+        title="Frequency of Topics",
+        xaxis_title="Topic",
+        yaxis_title="Frequency",
+    )
+
+    st.plotly_chart(fig)
+
+    # Recommendations
+    st.header("Recommendations 🔍")
+
+    # Example recommendations (you can replace this with actual recommendations based on data analysis)
+    st.markdown(
+        """
+        Based on the data analysis, we recommend focusing on the following areas:
+        - **Quantitative Finance**: This topic appears frequently and might require deeper analysis.
+        - **Financial Modeling**: Consider exploring more resources related to financial modeling techniques.
+        """
+    )
+
+# Rest of the code...
+
+# Run the app when the script is executed
 if __name__ == '__main__':
     main()

@@ -1,8 +1,8 @@
-# FinanceEconTool 📈🔬
+# FinanceEconTool 💼📈🔬
 
-**FinanceEconTool** is a Streamlit application designed for users interested in finance and economics. It allows users to upload class-related files, processes them, and provides insights on the uploaded content. With support for `.csv` and `.pdf` file formats, this tool not only displays the content but also recommends techniques in Python or R for in-depth financial and economic analysis based on the provided data.
+"FinanceEconTool" is a Streamlit application designed for users interested in finance and economics. It allows users to upload class-related files, processes them, and provides insights on the uploaded content. With support for `.csv` and `.pdf` file formats, this tool not only displays the content but also recommends techniques in Python or R for in-depth financial and economic analysis based on the provided data.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://tiffanythaonguyen-streamlit-example-streamlit-app-pia2qx.streamlit.app/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-streamlit-app-link-here)
 
 ## Table of Contents
 
@@ -17,7 +17,6 @@
 - **File Uploader**: Supports multiple `.csv` and `.pdf` files.
 - **Content Viewer**: Displays the content of the uploaded files.
 - **Data Statistics**: Provides basic statistics for CSV files.
-- **Hypothesis Testing**: Enables users to define a hypothesis for the uploaded files.
 - **Data Validation**: Validates data using pandera.
 - **Data Processing**: Structures data into a tidy format for further analysis.
 
@@ -45,10 +44,10 @@ Tailored advice based on the uploaded data trends, suggesting focus areas, techn
 
 ## Usage
 
-1. Access the web application at this [link](https://tiffanythaonguyen-streamlit-example-streamlit-app-pia2qx.streamlit.app/).
+1. Access the web application at this [link](https://your-streamlit-app-link-here).
 2. Follow the UI instructions to upload your files and gather insights.
 
 ## Contact
 
-- **Email**: [tnguyen30@scu.edu](mailto:tnguyen30@scu.edu)
-- **LinkedIn**: [tiffanythaonguyen](https://www.linkedin.com/in/tiffanythaonguyen/)
+- **Email**: [Your Email Address](mailto:your.email@example.com)
+- **LinkedIn**: [Your LinkedIn Profile](https://www.linkedin.com/in/your-linkedin-profile/)

@@ -1,7 +1,7 @@
 streamlit
-numpy
 pandas
 pdfreader
-statsmodels
 pandera
 scipy
+matplotlib
+seaborn

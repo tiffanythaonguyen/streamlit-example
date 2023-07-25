@@ -2,3 +2,5 @@ streamlit
 numpy
 pandas
 statsmodels
+tabula-py
+openpyxl

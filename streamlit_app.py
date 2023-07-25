@@ -1,79 +1,72 @@
-# main.py
 import streamlit as st
-import numpy as np
 import pandas as pd
+import numpy as np
 import PyPDF2
 from io import BytesIO
 
-# For econometrics
-import statsmodels.api as sm
-from statsmodels.sandbox.regression.gmm import IV2SLS
-
-def get_data(data):
-    # Handle data upload types
-    if '.csv' in data.name:
-        df = pd.read_csv(data)
-    elif '.pdf' in data.name:
-        # Extract text using PyPDF2
-        pdf_reader = PyPDF2.PdfFileReader(data)
-        text = ""
-        for page_num in range(pdf_reader.numPages):
-            text += pdf_reader.getPage(page_num).extractText()
-        st.text_area("Extracted PDF Text", text, height=300)  # Displaying extracted text for now
-        return None  # Adjust this as needed
-    elif '.xlsx' in data.name:
-        df = pd.read_excel(data, engine='openpyxl')
-    return df
-
-def show_summary(df, analysis_type):
-    # Show summary based on analysis type
-    if df is not None:
-        st.write(f"## {analysis_type}")
-
-        dependent_var = st.selectbox('Choose Dependent Variable', df.columns)
-        independent_vars = st.multiselect('Choose Independent Variables', df.columns, default=[col for col in df.columns if col != dependent_var])
-
-        X = df[independent_vars]
-        y = df[dependent_var]
-
-        if analysis_type == 'OLS':
-            X = sm.add_constant(X)  # adding a constant
-            model = sm.OLS(y, X).fit()
-            st.write(model.summary())
-        # Continue for other analysis types ...
-
 def main():
-    st.title("Econometric Tools for Business Decisions")
+    st.title("FinanceEconTool")
+    st.subheader("Upload your class files for analysis and insights!")
 
-    # Upload data section
-    data_files = st.file_uploader("Upload your company data (CSV, Excel, PDF)", type=['csv', 'xlsx', 'pdf'], accept_multiple_files=True)
-    analysis_type = st.sidebar.selectbox("Choose Analysis Type", ("Home", "OLS", "Multivariable Regression", "R Application", "Machine Learning"))
+    # Class Selection
+    class_option = st.selectbox(
+        "Which class does this file pertain to?",
+        ["Math for Finance and Analytics with R", "Analytics for Finance", "Database Management Systems - SQL", 
+         "Data Science with Python", "Econometrics"]
+    )
+    
+    uploaded_files = st.file_uploader("Upload Files", type=['csv', 'xlsx', 'pdf'], accept_multiple_files=True)
 
-    if data_files and analysis_type != "Home":
-        col1, col2, col3 = st.beta_columns(3)
+    if uploaded_files:
+        if st.button("Analyze"):
+            for file in uploaded_files:
+                st.subheader(f"Analysis for {file.name}")
 
-        with col1:
-            csv_files = [file for file in data_files if '.csv' in file.name]
-            for file in csv_files:
-                df = get_data(file)
-                st.write(f"### Summary for file: {file.name}")
-                show_summary(df, analysis_type)
+                if '.csv' in file.name:
+                    df = pd.read_csv(file)
+                    st.write(df.head())
 
-        with col2:
-            xlsx_files = [file for file in data_files if '.xlsx' in file.name]
-            for file in xlsx_files:
-                df = get_data(file)
-                st.write(f"### Summary for file: {file.name}")
-                show_summary(df, analysis_type)
+                elif '.xlsx' in file.name:
+                    df = pd.read_excel(file, engine='openpyxl')
+                    st.write(df.head())
 
-        with col3:
-            pdf_files = [file for file in data_files if '.pdf' in file.name]
-            for file in pdf_files:
-                df = get_data(file)
-                st.write(f"### Summary for file: {file.name}")
-                show_summary(df, analysis_type)
+                elif '.pdf' in file.name:
+                    pdf_reader = PyPDF2.PdfFileReader(file)
+                    text = ""
+                    for page_num in range(pdf_reader.numPages):
+                        text += pdf_reader.getPage(page_num).extractText()
+                    st.text_area("PDF Content", text, height=300)
 
-    st.markdown("### Check out the full app [here](https://tiffanythaonguyen-streamlit-example-streamlit-app-pia2qx.streamlit.app/)!")
+                # You can customize the analysis based on the class selected
+                st.write(f"Data Statistics for {file.name}")
+                st.write(df.describe())
+
+                # Generate insights or recommendations based on analyses
+                st.subheader("Recommendations and Skills Insights")
+                if class_option == "Math for Finance and Analytics with R":
+                    st.write("1. Master the integration of complex financial equations.")
+                    st.write("2. Use R for deeper data analysis and visualizations.")
+                    st.write("**Key Hard Skills**: Quantitative Finance, Empirical Finance Research")
+                    
+                elif class_option == "Analytics for Finance":
+                    st.write("1. Grasp time-series analysis for financial forecasting.")
+                    st.write("2. Delve into optimization techniques.")
+                    st.write("**Key Hard Skills**: Optimization Modeling, Forecasting")
+                    
+                elif class_option == "Database Management Systems - SQL":
+                    st.write("1. Master SQL queries for complex data retrieval.")
+                    st.write("2. Understand the architecture of relational databases.")
+                    st.write("**Key Hard Skills**: Database Optimization, Data Structuring")
+                    
+                elif class_option == "Data Science with Python":
+                    st.write("1. Understand ML models for financial prediction.")
+                    st.write("2. Master pandas for data manipulation.")
+                    st.write("**Key Hard Skills**: Panel Data Analysis, Data Visualization")
+                    
+                elif class_option == "Econometrics":
+                    st.write("1. Dive into multiple regression models.")
+                    st.write("2. Understand causality and potential pitfalls.")
+                    st.write("**Key Hard Skills**: Empirical Finance Research, Forecasting")
 
 if __name__ == '__main__':
     main()

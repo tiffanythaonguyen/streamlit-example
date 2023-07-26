@@ -1,7 +1,8 @@
-Streamlit
-Pandas
-pdfreader
-Matplotlib
-Seaborn
-Plotly
+streamlit
+pandas
+matplotlib
+seaborn
+plotly
+pandas_datareader
+yfinance
 st_pages>=0.4.0

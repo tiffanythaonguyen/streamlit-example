@@ -1,118 +1,122 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
+import pdfreader
+from io import BytesIO
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib import ticker
 import plotly.graph_objs as go
 
-# Define the function to extract content from a CSV file and return it as a DataFrame
-def extract_content_from_file(file):
-    if '.csv' in file.name:
-        df = pd.read_csv(file)
-        return df
-    elif '.txt' in file.name:
-        content = file.read().decode("utf-8")
-        return content
-    elif '.npy' in file.name:
-        np_array = np.load(file)
-        return np_array
-    return None
-
-# Define the function to write data to a text file or a NumPy array file
-def write_data_to_file(file, data):
-    if '.txt' in file.name:
-        with open(file.name, 'w') as f:
-            f.write(data)
-    elif '.npy' in file.name:
-        np.save(file.name, data)
+# ... Existing code ...
 
 # Define the main function for your Streamlit app
 def main():
-    st.set_page_config(page_title='FinEconAI 📈', page_icon=':chart_with_upwards_trend:')
-    st.title("FinEconAI 📈")
-    st.subheader("Interactive Streamlit application for analyzing parallel trends in financial data and time series")
-
-    # Introduction and Purpose
-    st.header("Introduction and Purpose")
-    st.write("Welcome to FinEconAI! This interactive Streamlit application is designed to analyze parallel trends in a large set of financial data "
-             "and time series. The primary model used for this analysis is the DD Regression Model, which is widely used in econometrics to assess "
-             "the causal impact of treatment (exposure to an event or intervention) on an outcome variable over time. In this case, we examine the "
-             "effect of a specific treatment on financial and time series data contained in a CSV text file.")
-
-    # Fundamental Questions and Hypotheses
-    st.subheader("Fundamental Questions and Hypotheses")
-    st.write("Fundamental Question: What are the parallel trends observed in the financial data and time series over the treatment period?")
-    st.write("Hypotheses: We hypothesize that if the treatment has no causal impact on the outcome variable, the trends in the treated and untreated "
-             "groups should be parallel over time. In contrast, if the treatment has a causal impact, the trends may diverge, indicating the presence "
-             "of a treatment effect. The DD Regression Model will help us estimate and analyze these trends in the data.")
-
-    # Domain Knowledge and Literature Survey
-    st.header("Domain Knowledge and Literature Survey")
-    st.write("Prior research in econometrics and finance has extensively used the DD Regression Model to analyze treatment effects in various scenarios. "
-             "The parallel trends assumption is crucial for establishing causal relationships between the treatment and outcome variables. The model is "
-             "commonly used in studies related to policy evaluations, financial interventions, and impact assessments. By employing this model, we aim to "
-             "provide insights into the causal impact of the treatment on the financial data and time series.")
-
-    # Data Choice and Data Handling
-    st.header("Data Choice and Handling")
-    st.write("For this analysis, we assume you have uploaded a CSV text file containing the financial data and time series or a text file or a NumPy "
-             "array file. The data should include variables related to the treatment, outcome, and relevant control variables over multiple time periods. "
-             "We will carefully handle the data to ensure that it meets the assumptions required for the DD Regression Model. This includes identifying "
-             "and addressing missing values, transforming variables as necessary, and conducting data cleaning procedures.")
+    st.title("FinanceEconTool 💼📈🔬")
+    st.subheader("Upload your class files for data collection and processing 📊💡📚")
 
     # Initialize content with None
     content = None
 
     # File Uploader
-    uploaded_files = st.file_uploader("Upload File", type=['csv', 'txt', 'npy'], accept_multiple_files=False)
+    uploaded_files = st.file_uploader("Upload Files", type=['csv', 'pdf'], accept_multiple_files=True)
 
     if uploaded_files:
-        file = uploaded_files[0]  # Only consider the first file if multiple files are uploaded
+        for file in uploaded_files:
+            # If CSV file
+            if '.csv' in file.name:
+                data = pd.read_csv(file)
+                st.write(f"Data overview for {file.name}:")
+                st.write(data.head())
 
-        # If CSV file
-        if '.csv' in file.name:
-            data = extract_content_from_file(file)
-            st.header("Data Overview")
-            st.write(f"Data overview for {file.name}:")
-            st.write(data.head())
+                st.sidebar.header("Visualizations")
+                plot_options = ["Bar plot", "Scatter plot", "Histogram", "Box plot"]
+                selected_plot = st.sidebar.selectbox("Choose a plot type", plot_options)
 
-            st.header("Statistical Summary Table")
-            st.write(data.describe())
+                if selected_plot == "Bar plot":
+                    x_axis = st.sidebar.selectbox("Select x-axis", data.columns)
+                    y_axis = st.sidebar.selectbox("Select y-axis", data.columns)
+                    st.write("Bar plot:")
+                    fig, ax = plt.subplots()
+                    sns.barplot(x=data[x_axis], y=data[y_axis], ax=ax)
 
-            st.header("Data Processing Steps")
-            st.write("In this analysis, we are using the DD Regression Model to estimate the causal impact of the treatment on the outcome variable "
-                     "over time. The following steps outline the data processing and model estimation process:")
+                    # Modify the x-axis ticks
+                    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True, nbins=10))
+                    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
 
-            # Data Cleaning and Preprocessing
-            st.write("1. Data Cleaning: We begin by cleaning the dataset to handle missing values, outliers, and other data quality issues. "
-                     "We use appropriate imputation techniques to address missing values and robust statistical methods to handle outliers.")
+                    st.pyplot(fig)
 
-            # Variable Selection
-            st.write("2. Variable Selection: We identify the key variables involved in the analysis. The main variables of interest include:")
-            st.write("- Treatment Variable: This binary variable indicates the presence or absence of the treatment over time.")
-            st.write("- Outcome Variable: This represents the financial data or time series we wish to analyze for the treatment effect.")
-            st.write("- Time Period Indicator: This variable helps us capture the time dimension in the analysis.")
-            st.write("- Control Variables: In addition to the main variables of interest, we also identify control variables that may influence the "
-                     "relationship between the treatment and outcome variables. These control variables may include company size, industry sector, "
-                     "financial health indicators, and other relevant factors.")
+                # Add other plots here (e.g., Scatter plot, Histogram, Box plot)
 
-            # Data Analysis and Estimation
-            st.write("3. Data Analysis and Estimation: With the selected variables, we perform a rigorous statistical analysis to estimate the treatment "
-                     "effect of the outcome variable over time. We use the DD Regression Model to account for potential confounding factors and establish "
-                     "causal relationships between the treatment and outcome.")
+                # Summary statistics DataFrame
+                st.subheader("Summary Statistics")
+                summary_stats_df = data.describe()
+                st.write(summary_stats_df)
 
-            # Interpretation and Insights
-            st.write("4. Interpretation and Insights: Finally, we interpret the results of our analysis and draw insights about the parallel trends in the "
-                     "financial data and time series. We discuss the implications of our findings and how they contribute to the existing literature on "
-                     "econometrics, finance, and impact evaluations.")
+                # Correlation Matrix DataFrame
+                st.subheader("Correlation Matrix")
+                correlation_df = data.corr()
+                st.write(correlation_df)
 
-            # File Downloader for Saving Processed Data
-            st.header("Save Processed Data")
-            save_data = st.button("Click to Save Processed Data")
-            if save_data:
-                # Perform any additional processing on the data if needed before saving
-                # In this example, we simply write the DataFrame or array to a file without any changes
-                write_data_to_file(file, data)
-                st.success("Data successfully saved!")
+            # If PDF file
+            elif '.pdf' in file.name:
+                content = extract_content_from_file(file)
+                st.text_area("PDF Content", content, height=300)
 
+            else:
+                st.write("Unsupported file format or empty content.")
 
+    # Summary Insights
+    st.header("Summary Insights 📊")
+
+    # Example insights (you can replace this with actual insights based on data analysis)
+    st.markdown(
+        """
+        - The data shows a positive correlation between "Finance" and "Economics".
+        - The average word count per document is 1500 words.
+        - The most common topic in the documents is "Financial Modeling".
+        """
+    )
+
+    # Interactive Charts
+    st.header("Interactive Charts 📉")
+
+    # Example chart (you can replace this with actual charts based on data visualization)
+    data = pd.DataFrame({
+        "Topic": ["Finance", "Economics", "Financial Modeling", "Quantitative Finance", "Data Science"],
+        "Frequency": [45, 32, 27, 15, 10]
+    })
+
+    fig = go.Figure(go.Bar(
+        x=data["Topic"],
+        y=data["Frequency"],
+        marker_color='rgb(26, 118, 255)'
+    ))
+
+    fig.update_layout(
+        title="Frequency of Topics",
+        xaxis_title="Topic",
+        yaxis_title="Frequency",
+    )
+
+    st.plotly_chart(fig)
+
+    # Recommendations
+    st.header("Recommendations 🔍")
+
+    # Example recommendations (you can replace this with actual recommendations based on data analysis)
+    st.markdown(
+        """
+        Based on the data analysis, we recommend focusing on the following areas:
+        - **Quantitative Finance**: This topic appears frequently and might require deeper analysis.
+        - **Financial Modeling**: Consider exploring more resources related to financial modeling techniques.
+        - **Economics**: There is a significant correlation between Finance and Economics. Exploring economics-related topics can provide valuable insights.
+
+        Remember that these are just preliminary insights, and further analysis may reveal more specific areas for investigation.
+        """
+    )
+
+# Rest of the code...
+
+# Run the app when the script is executed
+if __name__ == '__main__':
+    main()

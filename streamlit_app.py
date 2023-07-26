@@ -1,13 +1,25 @@
 import streamlit as st
 import pandas as pd
-import pdfreader
+import yfinance as yf
+import pandas_datareader as pdr
 from io import BytesIO
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib import ticker
 import plotly.graph_objs as go
+from IPython.display import HTML
 
-# ... Existing code ...
+# Define the function to extract content from a CSV file and return it as a DataFrame
+def extract_content_from_file(file):
+    if '.csv' in file.name:
+        df = pd.read_csv(file)
+        return df
+    return None
+
+# Define the function to fetch data from FRED API
+def fetch_fred_data(series, start_date, end_date):
+    df = pdr.DataReader(series, 'fred', start_date, end_date)
+    return df
 
 # Define the main function for your Streamlit app
 def main():
@@ -18,13 +30,13 @@ def main():
     content = None
 
     # File Uploader
-    uploaded_files = st.file_uploader("Upload Files", type=['csv', 'pdf'], accept_multiple_files=True)
+    uploaded_files = st.file_uploader("Upload Files", type=['csv'], accept_multiple_files=True)
 
     if uploaded_files:
         for file in uploaded_files:
             # If CSV file
             if '.csv' in file.name:
-                data = pd.read_csv(file)
+                data = extract_content_from_file(file)
                 st.write(f"Data overview for {file.name}:")
                 st.write(data.head())
 
@@ -57,48 +69,30 @@ def main():
                 correlation_df = data.corr()
                 st.write(correlation_df)
 
-            # If PDF file
-            elif '.pdf' in file.name:
-                content = extract_content_from_file(file)
-                st.text_area("PDF Content", content, height=300)
+    # Fetch data from FRED API
+    st.header("Forecasting using FRED API 📈")
 
-            else:
-                st.write("Unsupported file format or empty content.")
+    # Define the series codes for House_Price_Index, GDP, and Unemployment
+    series_codes = ['CSUSHPISA', 'GDP', 'UNRATE']
 
-    # Summary Insights
-    st.header("Summary Insights 📊")
+    # Define the date range for the forecast
+    start_date = '2020-01-01'
+    end_date = '2023-12-31'
 
-    # Example insights (you can replace this with actual insights based on data analysis)
-    st.markdown(
-        """
-        - The data shows a positive correlation between "Finance" and "Economics".
-        - The average word count per document is 1500 words.
-        - The most common topic in the documents is "Financial Modeling".
-        """
-    )
+    for series in series_codes:
+        st.subheader(f"Forecast for {series}:")
 
-    # Interactive Charts
-    st.header("Interactive Charts 📉")
+        # Fetch data from FRED API
+        df = fetch_fred_data(series, start_date, end_date)
 
-    # Example chart (you can replace this with actual charts based on data visualization)
-    data = pd.DataFrame({
-        "Topic": ["Finance", "Economics", "Financial Modeling", "Quantitative Finance", "Data Science"],
-        "Frequency": [45, 32, 27, 15, 10]
-    })
+        # Display the data
+        st.write(df)
 
-    fig = go.Figure(go.Bar(
-        x=data["Topic"],
-        y=data["Frequency"],
-        marker_color='rgb(26, 118, 255)'
-    ))
-
-    fig.update_layout(
-        title="Frequency of Topics",
-        xaxis_title="Topic",
-        yaxis_title="Frequency",
-    )
-
-    st.plotly_chart(fig)
+        # Plot the data using Plotly
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=df.index, y=df[series], mode='lines', name=series))
+        fig.update_layout(title=f"Time Series Plot for {series}", xaxis_title="Date", yaxis_title=series)
+        st.plotly_chart(fig)
 
     # Recommendations
     st.header("Recommendations 🔍")
@@ -107,16 +101,27 @@ def main():
     st.markdown(
         """
         Based on the data analysis, we recommend focusing on the following areas:
-        - **Quantitative Finance**: This topic appears frequently and might require deeper analysis.
-        - **Financial Modeling**: Consider exploring more resources related to financial modeling techniques.
-        - **Economics**: There is a significant correlation between Finance and Economics. Exploring economics-related topics can provide valuable insights.
+        - **House_Price_Index**: Analyze the trend and perform a forecast to identify potential investment opportunities in the housing market.
+        - **GDP**: Monitor the GDP growth rate and plan financial strategies accordingly for business development.
+        - **Unemployment**: Keep an eye on the unemployment rate and its impact on the economy to make informed decisions.
 
         Remember that these are just preliminary insights, and further analysis may reveal more specific areas for investigation.
         """
     )
+
+    # Display the FRED embedded links
+    st.header("FRED Embedded Links 📈")
+    iframe_code = '''
+    <iframe style="border: 1px solid #333333; overflow: hidden; width: 190px; height: 490px;" src="//research.stlouisfed.org/fred-glance-widget.php" height="240" width="320" frameborder="0" scrolling="no"></iframe>
+
+    <<iframe src="https://fred.stlouisfed.org/graph/graph-landing.php?g=175Js&width=670&height=475" scrolling="no" frameborder="0" style="overflow:hidden; width:670px; height:525px;" allowTransparency="true" loading="lazy"></iframe>>
+    '''
+
+    st.components.v1.html(iframe_code)
 
 # Rest of the code...
 
 # Run the app when the script is executed
 if __name__ == '__main__':
     main()
+

@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib import ticker
 import plotly.graph_objs as go
-from IPython.display import HTML
 
 # Define the function to extract content from a CSV file and return it as a DataFrame
 def extract_content_from_file(file):
@@ -124,4 +123,3 @@ def main():
 # Run the app when the script is executed
 if __name__ == '__main__':
     main()
-

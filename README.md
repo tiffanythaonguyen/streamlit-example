@@ -1,6 +1,6 @@
-# PyFiTech 💼📈🔬
+# PyFiQuant 💼📈🔬
 
-"FinanceEconTool" is an interactive Streamlit application designed for users interested in finance and economics. It empowers users to upload class-related files, processes them, and provides insightful analysis on the uploaded content. With support for both .csv and .pdf file formats, this tool not only displays the content but also recommends advanced techniques in Python or R for in-depth financial and economic analysis based on the provided data.
+"PyFiQuant" is an interactive Streamlit application designed for users interested in finance and economics. It empowers users to upload class-related files, processes them, and provides insightful analysis on the uploaded content. With support for both .csv and .pdf file formats, this tool not only displays the content but also recommends advanced techniques in Python or R for in-depth financial and economic analysis based on the provided data.
 
 ## Table of Contents
 - [Features](#features)

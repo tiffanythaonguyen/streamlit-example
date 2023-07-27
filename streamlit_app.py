@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 def generate_description(df):
@@ -35,6 +34,10 @@ def analyze_data(df):
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
     st.pyplot(fig)
 
+    # Snapshot of the data
+    st.subheader("Snapshot of the Data")
+    st.write(df.head())
+
     # Short description of the data
     st.subheader("Short Description")
     st.write(generate_description(df))
@@ -50,7 +53,6 @@ def main():
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
-        st.write(df.head())
         
         if st.button("Analyze Data"):
             analyze_data(df)

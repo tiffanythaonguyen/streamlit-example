@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import statsmodels.api as sm
 
-# Function for basic statistical analysis
 def analyze_data(df):
     # Basic insights
     st.write(f"Total Columns: {df.shape[1]}")
@@ -11,17 +10,19 @@ def analyze_data(df):
     for column in df.columns:
         st.write(f"Unique values in {column}: {df[column].nunique()}")
     
-    # Regression (for demonstration, we'll assume 'prcc_f' as dependent variable)
-    # Using 'sale', 'cogs', and 'ppegt' as independent variables
-    X = df[['sale', 'cogs', 'ppegt']].dropna()
-    y = df.loc[X.index, 'prcc_f']
-    X = sm.add_constant(X)  # adding a constant
-    model = sm.OLS(y, X).fit()
-    st.write(model.summary())
+    # Regression (assuming 'prcc_f' as dependent variable and 'sale', 'cogs', and 'ppegt' as independent variables)
+    if 'prcc_f' in df.columns and all(col in df.columns for col in ['sale', 'cogs', 'ppegt']):
+        X = df[['sale', 'cogs', 'ppegt']].dropna()
+        y = df.loc[X.index, 'prcc_f']
+        X = sm.add_constant(X)  # adding a constant
+        model = sm.OLS(y, X).fit()
+        st.write(model.summary())
 
-    # Correlation
-    st.subheader('Correlation Matrix')
-    st.write(df[['prcc_f', 'sale', 'cogs', 'ppegt']].corr())
+        # Correlation
+        st.subheader('Correlation Matrix')
+        st.write(df[['prcc_f', 'sale', 'cogs', 'ppegt']].corr())
+    else:
+        st.warning("The necessary columns for regression analysis are not found in the uploaded CSV.")
 
     # Short description of the data
     st.subheader("Short Description")
@@ -32,7 +33,6 @@ def analyze_data(df):
     price, among other variables.
     """)
 
-# Main function
 def main():
     st.title("PyFiQuant 💼📈🔬")
     
@@ -46,4 +46,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

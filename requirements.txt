@@ -1,4 +1,7 @@
 streamlit
-pandas_datareader
-plotly
 pandas
+statsmodels
+pdfreader
+pandera
+scipy
+linearmodels

@@ -1,7 +1,5 @@
 streamlit
 pandas
 statsmodels
-pdfreader
-pandera
-scipy
-linearmodels
+seaborn
+matplotlib

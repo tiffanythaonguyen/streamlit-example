@@ -11,23 +11,26 @@ def analyze_data(df):
     for column in df.columns:
         st.write(f"Unique values in {column}: {df[column].nunique()}")
     
-    # Regression (for demonstration, we'll assume last column as dependent variable)
-    X = df.iloc[:, :-1]
+    # Regression (for demonstration, we'll assume 'prcc_f' as dependent variable)
+    # Using 'sale', 'cogs', and 'ppegt' as independent variables
+    X = df[['sale', 'cogs', 'ppegt']].dropna()
+    y = df.loc[X.index, 'prcc_f']
     X = sm.add_constant(X)  # adding a constant
-    y = df.iloc[:, -1]
     model = sm.OLS(y, X).fit()
     st.write(model.summary())
 
-# Function for panel data analysis (simplified for demonstration)
-def panel_data_analysis(df):
-    # Assuming 'id' and 'time' columns for entities and time respectively
-    from linearmodels import PanelOLS
-    dependent = df.iloc[:, -1]
-    exog = sm.add_constant(df.iloc[:, :-2])
-    panel_data = df.set_index(['id', 'time'])
-    mod = PanelOLS(dependent, exog, entity_effects=True)
-    res = mod.fit(cov_type='clustered', cluster_entity=True)
-    st.write(res)
+    # Correlation
+    st.subheader('Correlation Matrix')
+    st.write(df[['prcc_f', 'sale', 'cogs', 'ppegt']].corr())
+
+    # Short description of the data
+    st.subheader("Short Description")
+    st.write("""
+    This dataset provides financial indicators for various companies across different years, 
+    ranging from asset details to income metrics. The dataset includes information such as 
+    sales, cost of goods sold, property, plant, and equipment (gross), and the closing stock 
+    price, among other variables.
+    """)
 
 # Main function
 def main():
@@ -40,9 +43,6 @@ def main():
         
         if st.button("Analyze Data"):
             analyze_data(df)
-        
-        if st.button("Panel Data Analysis"):
-            panel_data_analysis(df)
 
 if __name__ == "__main__":
     main()

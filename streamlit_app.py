@@ -101,3 +101,5 @@ elif page == "Python and Finance":
     python_finance()
 elif page == "File Upload and Analysis":
     file_upload_analysis()
+
+

@@ -1,94 +1,103 @@
 import streamlit as st
+import pandas as pd
 import pandas_datareader as pdr
 import plotly.graph_objects as go
+import statsmodels.api as sm
+from linearmodels import PanelOLS
 
-# Define the function to fetch data from FRED API
+# Fetch data from FRED API
 def fetch_fred_data(series, start_date, end_date):
     df = pdr.DataReader(series, 'fred', start_date, end_date)
     return df
 
-# Home Page
-def home():
-    st.title("Welcome to pyfiquant")
-    st.write(
-    "This app showcases the significance of data-driven decision-making, "
-    "my coursework from my graduate program, and my interest in finance and Python."
-    )
+# Basic statistical analysis
+def analyze_data(df):
+    st.write(f"Total Columns: {df.shape[1]}")
+    st.write(f"Total Rows: {df.shape[0]}")
+    st.write(f"Index: {df.index}")
+    for column in df.columns:
+        st.write(f"Unique values in {column}: {df[column].nunique()}")
 
-# World Economic Forum Insights
-def wef_insights():
-    st.title("World Economic Forum Insights")
-    st.write(
-    "Dive deeper into the financial landscape, innovations, and insights provided by the World Economic Forum."
-    )
-    st.markdown("[WEF Intelligence on Financial and Monetary Systems](https://intelligence.weforum.org/topics/a1Gb0000000LHOUEA4)")
-    st.markdown("[Streamlit App Showcase](https://tiffanythaonguyen-streamlit-example-streamlit-app-pia2qx.streamlit.app/)")
+    # Regression (assuming last column as dependent variable)
+    X = df.iloc[:, :-1]
+    X = sm.add_constant(X)
+    y = df.iloc[:, -1]
+    model = sm.OLS(y, X).fit()
+    st.write(model.summary())
 
-# FRED Data Analysis
-def fred_data_analysis():
-    st.header("FRED Data Analysis 📈")
-    series = st.selectbox("Choose a data series:", ['CSUSHPISA', 'GDP', 'UNRATE'])
-    start_date = st.date_input("Start Date", '2020-01-01')
-    end_date = st.date_input("End Date", '2023-12-31')
+# Panel data analysis
+def panel_data_analysis(df):
+    # Assuming 'id' and 'time' columns for entities and time respectively
+    dependent = df.iloc[:, -1]
+    exog = sm.add_constant(df.iloc[:, :-2])
+    panel_data = df.set_index(['id', 'time'])
+    mod = PanelOLS(dependent, exog, entity_effects=True)
+    res = mod.fit(cov_type='clustered', cluster_entity=True)
+    st.write(res)
+
+# File Upload and Analysis
+def file_upload_analysis():
+    uploaded_file = st.file_uploader("Upload a CSV file", type="csv")
+    if uploaded_file:
+        data = pd.read_csv(uploaded_file)
+        st.write(data.head())
+        analyze_data(data)
+
+        # Check for panel data analysis feasibility
+        if 'id' in data.columns and 'time' in data.columns:
+            panel_data_analysis(data)
+
+# Government Data Analysis (from uploaded file)
+def gov_data_analysis():
+    st.title("Government Data Analysis")
     
-    if st.button("Fetch Data"):
+    # Define the series codes for Treasury Rate, Housing Supply, and GDP
+    series_codes = ['GS10', 'HOUST', 'GDP']
+
+    # Define the date range for the forecast
+    start_date = '2020-01-01'
+    end_date = '2023-12-31'
+
+    for series in series_codes:
+        st.subheader(f"Data for {series}:")
+
+        # Fetch data from FRED API
         df = fetch_fred_data(series, start_date, end_date)
-        st.write(f"Data for {series} from {start_date} to {end_date}:")
+
+        # Display the data
         st.write(df)
+
+        # Plot the data using Plotly
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=df.index, y=df[series], mode='lines', name=series))
         fig.update_layout(title=f"Time Series Plot for {series}", xaxis_title="Date", yaxis_title=series)
         st.plotly_chart(fig)
 
-# Future of Finance Insights
-def future_of_finance():
-    st.title("Future of Finance: 2030")
-    st.write(
-    "The landscape of global finance is rapidly evolving with the advent of new technologies and shifts in geopolitical power. "
-    "Here are some key insights and predictions for the financial world in 2030:"
-    )
-    st.subheader("Decentralization and The Decline of Dollar Dominance")
-    st.write(
-    "The centralized global monetary system, dominated by the US dollar, is transitioning to a multi-polar world "
-    "with multiple reserve currencies. Currencies like the euro and renminbi may rise in prominence, reflecting "
-    "broader global economic shifts."
-    )
-    st.subheader("Rise of Digital Money")
-    st.write(
-    "Digital currencies, both private and central-bank issued, are proliferating. This comes with implications "
-    "for monetary and financial policymaking. Fintech innovations are driving this change, providing specialized "
-    "financial services, including credit and payment solutions, through digital platforms. The acceptance and adoption "
-    "of cryptocurrencies are expected to continue."
-    )
-    st.subheader("Transformation of Traditional Banking")
-    st.write(
-    "Fintech is set to revolutionize traditional banking and insurance models. New decentralized entities "
-    "will emerge, offering liquidity and diverse financial services in a disintermediated manner. New technologies "
-    "will introduce novel asset classes, directly connecting savers and borrowers, and commoditizing financial data. "
-    "However, this also leads to potential fragmentation and market dislocations."
-    )
+    st.write("For more detailed data, please visit the following FRED links:")
+    st.markdown("[Treasury Rate (GS10)](https://fred.stlouisfed.org/series/GS10)")
+    st.markdown("[Housing Supply (HOUST)](https://fred.stlouisfed.org/series/HOUST)")
+    st.markdown("[GDP](https://fred.stlouisfed.org/series/GDP)")
 
-# Python and Finance Insights
-def python_finance():
-    st.title("Python and Finance")
-    st.write("Python has rapidly become a leading language in the financial sector, with tools and libraries that cater to a variety of tasks ranging from data analysis to trading strategy development.")
-    st.write("Here, we will explore various Python tools, libraries, and methodologies pertinent to finance.")
+# ... [the rest of your functions: home, fred_data_analysis, future_of_finance, python_finance]
 
 # Main App
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Home", 
-                                  "World Economic Forum Insights", 
+                                  "Government Data Analysis", 
                                   "FRED Data Analysis", 
                                   "Future of Finance: 2030", 
-                                  "Python and Finance"])
+                                  "Python and Finance",
+                                  "File Upload and Analysis"])
 
 if page == "Home":
     home()
-elif page == "World Economic Forum Insights":
-    wef_insights()
+elif page == "Government Data Analysis":
+    gov_data_analysis()
 elif page == "FRED Data Analysis":
     fred_data_analysis()
 elif page == "Future of Finance: 2030":
     future_of_finance()
 elif page == "Python and Finance":
     python_finance()
+elif page == "File Upload and Analysis":
+    file_upload_analysis()

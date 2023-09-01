@@ -20,7 +20,7 @@ def identify_abbreviations_and_caps(doc):
 
 # Main function
 def main():
-    st.title("BERT Keyword Extractor 🎈")
+    st.title("Keyword Extractor 🎈")
     
     st.markdown("## 📌 Paste Document")
     

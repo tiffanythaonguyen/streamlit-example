@@ -12,8 +12,8 @@ def identify_numerical_values(doc):
     
     return dollar_values, percent_values, whole_numbers, decimal_numbers, months, years
 
-# Main function for the app
-def main():
+# Main function for the "What" page
+def what_page():
     st.title("What")
     
     st.markdown("## 📌 Paste Document")
@@ -30,25 +30,25 @@ def main():
         st.write(f"Identified months: {months}")
         st.write(f"Identified years: {years}")
 
-# Second page function
-def other_page():
+# Second page function for the "Why" page
+def why_page():
     st.title("Why")
     st.write("This is the 'Why' page in the app.")
 
-# Third page function
+# Third page function for the "How" page
 def how_page():
     st.title("How")
     st.write("This is the 'How' page in the app.")
 
 # App navigation
 app_pages = {
-    "What": main,
-    "Why": other_page,
+    "What": what_page,
+    "Why": why_page,
     "How": how_page,
 }
 
-selected_page = st.sidebar.selectbox("Select a page", list(app_pages.keys()))
+selected_page = st.sidebar.radio("Select a page", list(app_pages.keys()))
 app_pages[selected_page]()
 
 if __name__ == "__main__":
-    main()
+    what_page()  # Start with the "What" page by default

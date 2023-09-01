@@ -12,19 +12,9 @@ def identify_numerical_values(doc):
     
     return dollar_values, percent_values, by_year_values
 
-# Function to identify capitalized words
-def identify_capitalized_words(doc):
-    capitalized_words = re.findall(r'\b[A-Z][a-z]*\b', doc)
-    return capitalized_words
-
-# Function to identify abbreviations
-def identify_abbreviations(doc):
-    abbreviations = re.findall(r'\b[A-Z]{2,}\b', doc)
-    return abbreviations
-
 # Main function
 def main():
-    st.title("BERT Keyword Extractor 🎈")
+    st.title("Business Analysis")
     
     st.markdown("## 📌 Paste Document")
     
@@ -42,13 +32,7 @@ def main():
         st.write(f"Identified percent values: {percent_values}")
         st.write(f"Identified 'by year' values: {by_year_values}")
 
-        # Identify capitalized words
-        capitalized_words = identify_capitalized_words(doc)
-        st.write(f"Identified capitalized words: {capitalized_words}")
-
-        # Identify abbreviations
-        abbreviations = identify_abbreviations(doc)
-        st.write(f"Identified abbreviations: {abbreviations}")
+        # Your existing code for keyword extraction can go here
 
 if __name__ == "__main__":
     main()

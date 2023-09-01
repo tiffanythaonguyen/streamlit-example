@@ -1,34 +1,26 @@
 import streamlit as st
-import re
-from collections import Counter
-import nltk
-from nltk.corpus import stopwords
-from nltk.collocations import BigramCollocationFinder
-from nltk.metrics import BigramAssocMeasures
-
-# Download stopwords if not already downloaded
-nltk.download('stopwords')
+import re  # Importing the regular expression library
 
 # Function to identify numerical values in the text
 def identify_numerical_values(doc):
-    dollar_values = re.findall(r'\$\d+(\.\d{2})?|\$\d{1,3}(?:,\d{3})*(?:\.\d{2})?', doc)
-    percent_values = re.findall(r'\d+(\.\d+)?%', doc)
+    # Identify $100,000 format
+    dollar_values = re.findall(r'\$\d{1,3}(?:,\d{3})*', doc)
+    # Identify % format
+    percent_values = re.findall(r'\d{1,3}%', doc)
+    # Identify "by 'year'" format
     by_year_values = re.findall(r'by \d{4}', doc)
+    
     return dollar_values, percent_values, by_year_values
 
-# Function to identify keywords by frequency
-def identify_keywords_by_frequency(doc):
-    words = re.findall(r'\b\w+\b', doc.lower())
-    filtered_words = [word for word in words if word not in stopwords.words('english')]
-    return Counter(filtered_words).most_common(10)
+# Function to identify capitalized words
+def identify_capitalized_words(doc):
+    capitalized_words = re.findall(r'\b[A-Z][a-z]*\b', doc)
+    return capitalized_words
 
-# Function to identify relationships between words
-def identify_word_relationships(doc):
-    words = re.findall(r'\b\w+\b', doc.lower())
-    filtered_words = [word for word in words if word not in stopwords.words('english')]
-    bigram_finder = BigramCollocationFinder.from_words(filtered_words)
-    bigrams = bigram_finder.nbest(BigramAssocMeasures.likelihood_ratio, 10)
-    return bigrams
+# Function to identify abbreviations
+def identify_abbreviations(doc):
+    abbreviations = re.findall(r'\b[A-Z]{2,}\b', doc)
+    return abbreviations
 
 # Main function
 def main():
@@ -50,14 +42,13 @@ def main():
         st.write(f"Identified percent values: {percent_values}")
         st.write(f"Identified 'by year' values: {by_year_values}")
 
-        # Identify keywords by frequency
-        keywords_by_frequency = identify_keywords_by_frequency(doc)
-        st.write(f"Identified keywords by frequency: {keywords_by_frequency}")
+        # Identify capitalized words
+        capitalized_words = identify_capitalized_words(doc)
+        st.write(f"Identified capitalized words: {capitalized_words}")
 
-        # Identify relationships between words
-        word_relationships = identify_word_relationships(doc)
-        st.write(f"Identified relationships between words: {word_relationships}")
+        # Identify abbreviations
+        abbreviations = identify_abbreviations(doc)
+        st.write(f"Identified abbreviations: {abbreviations}")
 
 if __name__ == "__main__":
     main()
-

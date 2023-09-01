@@ -1,20 +1,20 @@
 import streamlit as st
 import re  # Importing the regular expression library
 
-# Function to identify numerical values, months, and years in the text
+# Function to identify numerical values and the next word after each value
 def identify_numerical_values(doc):
     # Identify $100,000 format
-    dollar_values = re.findall(r'\$\d{1,3}(?:,\d{3})*', doc)
+    dollar_values = re.findall(r'(\$\d{1,3}(?:,\d{3})*)(?:\s+(\w+))?', doc)
     # Identify % format
-    percent_values = re.findall(r'\d{1,3}%', doc)
-    # Identify general numerical values
-    general_numerical_values = re.findall(r'\b\d+\b', doc)
+    percent_values = re.findall(r'(\d{1,3}%)(?:\s+(\w+))?', doc)
+    # Identify whole and decimal numbers
+    numbers = re.findall(r'(\b\d+(\.\d+)?\b)(?:\s+(\w+))?', doc)
     # Identify months
-    months = re.findall(r'\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b', doc, re.IGNORECASE)
-    # Identify years
+    months = re.findall(r'\b(January|February|March|April|May|June|July|August|September|October|November|December)\b', doc)
+    # Identify years in xxxx format
     years = re.findall(r'\b\d{4}\b', doc)
     
-    return dollar_values, percent_values, general_numerical_values, months, years
+    return dollar_values, percent_values, numbers, months, years
 
 # Main function
 def main():
@@ -28,13 +28,13 @@ def main():
     # Button to trigger analysis
     if st.button("Analyze Text"):
         
-        # Identify numerical values, months, and years
-        dollar_values, percent_values, general_numerical_values, months, years = identify_numerical_values(doc)
+        # Identify numerical values and the next word after each value
+        dollar_values, percent_values, numbers, months, years = identify_numerical_values(doc)
         
         # Display identified values
         st.write(f"Identified dollar values: {dollar_values}")
         st.write(f"Identified percent values: {percent_values}")
-        st.write(f"Identified general numerical values: {general_numerical_values}")
+        st.write(f"Identified whole and decimal numbers: {numbers}")
         st.write(f"Identified months: {months}")
         st.write(f"Identified years: {years}")
 
@@ -42,4 +42,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

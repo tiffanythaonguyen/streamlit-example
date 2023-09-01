@@ -39,14 +39,19 @@ def main():
         st.write(f"Identified months: {months}")
         st.write(f"Identified years: {years}")
 
-    # Add vertical space
+     # Add vertical space
     add_n_lines = st.slider("Add n vertical lines below this", 1, 20, 5)
     add_vertical_space(add_n_lines)
-    st.write("Here is text after the nth line!")
+    st.write("Dataframe")
 
-    # Echo expander function
-    with echo_expander(code_location="below", expander=True, label="Expand to see the code"):
-        st.write("This code will be printed in an expander")
+    # Echo expander function for simple DataFrame example
+    with echo_expander(code_location="below", label="Simple Dataframe example"):
+        import pandas as pd
+        df = pd.DataFrame(
+            [[1, 2, 3, 4, 5], [11, 12, 13, 14, 15]],
+            columns=("A", "B", "C", "D", "E"),
+        )
+        st.dataframe(df)
 
 if __name__ == "__main__":
     main()

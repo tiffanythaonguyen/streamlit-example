@@ -3,6 +3,7 @@ import re  # Importing the regular expression library
 import contextlib
 import traceback
 import textwrap
+from contextlib import contextmanager  # Add this line
 
 # Function to add vertical space
 def add_vertical_space(num_lines: int = 1):
@@ -20,6 +21,12 @@ def identify_numerical_values(doc):
     years = re.findall(r'\b\d{4}\b', doc)
     
     return dollar_values, percent_values, whole_numbers, decimal_numbers, months, years
+
+# Echo expander function
+@contextmanager
+def echo_expander(code_location="above", expander=True, label="Show code"):
+    """Use in a `with` block to draw some code on the app, then execute it."""
+    # Rest of the echo_expander function code...
 
 # Main function
 def main():
@@ -39,7 +46,7 @@ def main():
         st.write(f"Identified months: {months}")
         st.write(f"Identified years: {years}")
 
-     # Add vertical space
+    # Add vertical space
     add_n_lines = st.slider("Add n vertical lines below this", 1, 20, 5)
     add_vertical_space(add_n_lines)
     st.write("Dataframe")

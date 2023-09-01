@@ -1,5 +1,8 @@
 import streamlit as st
 import re  # Importing the regular expression library
+import contextlib
+import traceback
+import textwrap
 
 # Function to add vertical space
 def add_vertical_space(num_lines: int = 1):
@@ -40,6 +43,10 @@ def main():
     add_n_lines = st.slider("Add n vertical lines below this", 1, 20, 5)
     add_vertical_space(add_n_lines)
     st.write("Here is text after the nth line!")
+
+    # Echo expander function
+    with echo_expander(code_location="below", expander=True, label="Expand to see the code"):
+        st.write("This code will be printed in an expander")
 
 if __name__ == "__main__":
     main()

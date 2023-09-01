@@ -5,3 +5,4 @@ pandas == 1.2.4
 keybert
 flair
 click<8
+nltk==3.6.3

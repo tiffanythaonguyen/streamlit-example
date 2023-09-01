@@ -79,3 +79,4 @@ app_pages[selected_page]()
 
 if __name__ == "__main__":
     what_page()  # Start with the "What" page by default
+    

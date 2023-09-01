@@ -1,15 +1,5 @@
 import streamlit as st
 import re  # Importing the regular expression library
-import contextlib
-import traceback
-import textwrap
-from contextlib import contextmanager  # Add this line
-
-# Function to add vertical space
-def add_vertical_space(num_lines: int = 1):
-    """Add vertical space to your Streamlit app."""
-    for _ in range(num_lines):
-        st.write("")
 
 # Function to identify numerical values and the next two words or any key after each value
 def identify_numerical_values(doc):
@@ -22,13 +12,7 @@ def identify_numerical_values(doc):
     
     return dollar_values, percent_values, whole_numbers, decimal_numbers, months, years
 
-# Echo expander function
-@contextmanager
-def echo_expander(code_location="above", expander=True, label="Show code"):
-    """Use in a `with` block to draw some code on the app, then execute it."""
-    # Rest of the echo_expander function code...
-
-# Main function
+# Main function for the first page
 def main():
     st.title("Business Analysis")
     
@@ -46,19 +30,19 @@ def main():
         st.write(f"Identified months: {months}")
         st.write(f"Identified years: {years}")
 
-    # Add vertical space
-    add_n_lines = st.slider("Add n vertical lines below this", 1, 20, 5)
-    add_vertical_space(add_n_lines)
-    st.write("Dataframe")
+# Main function for the second page
+def other_page():
+    st.title("Other Page")
+    st.write("This is another page in the app.")
 
-    # Echo expander function for simple DataFrame example
-    with echo_expander(code_location="below", label="Simple Dataframe example"):
-        import pandas as pd
-        df = pd.DataFrame(
-            [[1, 2, 3, 4, 5], [11, 12, 13, 14, 15]],
-            columns=("A", "B", "C", "D", "E"),
-        )
-        st.dataframe(df)
+# App navigation
+app_pages = {
+    "Business Analysis": main,
+    "Other Page": other_page,
+}
+
+selected_page = st.sidebar.selectbox("Select a page", list(app_pages.keys()))
+app_pages[selected_page]()
 
 if __name__ == "__main__":
     main()

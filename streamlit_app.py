@@ -1,34 +1,45 @@
 import streamlit as st
-import re  # Importing the regular expression library
+import pandas as pd
+import numpy as np
 
-# Function to identify numerical values and the next two words or any key after each value
-def identify_numerical_values(doc):
-    dollar_values = re.findall(r'(\$\d{1,3}(?:,\d{3})*)(?:\s+([\w\s\W]{1,20}))?', doc)
-    percent_values = re.findall(r'(\d{1,3}%)(?:\s+([\w\s\W]{1,20}))?', doc)
-    whole_numbers = re.findall(r'(\b\d{1,3}(?:,\d{3})*\b)(?!%)(?:\s+([\w\s\W]{1,20}))?', doc)
-    decimal_numbers = re.findall(r'(\b\d+\.\d{1,2}\b)(?:\s+([\w\s\W]{1,20}))?', doc)
-    months = re.findall(r'\b(January|February|March|April|May|June|July|August|September|October|November|December)\b', doc)
-    years = re.findall(r'\b\d{4}\b', doc)
-    
-    return dollar_values, percent_values, whole_numbers, decimal_numbers, months, years
-
-# Main function
 def main():
-    st.title("Business Analysis")
-    
-    st.markdown("## 📌 Paste Document")
-    
-    doc = st.text_area("Paste your text below (max 500 words)", height=200)
-    
-    if st.button("Analyze Text"):
-        dollar_values, percent_values, whole_numbers, decimal_numbers, months, years = identify_numerical_values(doc)
-        
-        st.write(f"Identified dollar values: {dollar_values}")
-        st.write(f"Identified percent values: {percent_values}")
-        st.write(f"Identified whole numbers: {whole_numbers}")
-        st.write(f"Identified decimal numbers: {decimal_numbers}")
-        st.write(f"Identified months: {months}")
-        st.write(f"Identified years: {years}")
+    st.title("Mito Spreadsheet Automation for Financial Data")
+
+    # Initialize an empty DataFrame
+    empty_df = pd.DataFrame()
+
+    # Display empty DataFrame as a table in Streamlit
+    st.write("Empty Spreadsheet:")
+    st.write(empty_df)
+
+    # Upload CSV or Excel file
+    uploaded_file = st.file_uploader("Choose a CSV or Excel file", type=["csv", "xlsx"])
+
+    if uploaded_file is not None:
+        try:
+            # Read and display the uploaded data
+            if uploaded_file.name.endswith('.csv'):
+                df = pd.read_csv(uploaded_file)
+            elif uploaded_file.name.endswith('.xlsx'):
+                df = pd.read_excel(uploaded_file, engine='openpyxl')
+
+            st.write("Uploaded Spreadsheet:")
+            st.write(df)
+
+            # Perform basic statistical summaries using NumPy
+            if st.button("Show Basic Statistics"):
+                st.write("Mean of each column:")
+                st.write(np.mean(df))
+
+                st.write("Standard Deviation of each column:")
+                st.write(np.std(df))
+
+                st.write("Correlation Matrix:")
+                st.write(np.corrcoef(df.values, rowvar=False))
+
+        except Exception as e:
+            st.write("There was an error loading the file.")
+            st.write(e)
 
 if __name__ == "__main__":
     main()

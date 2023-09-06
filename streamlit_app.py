@@ -1,60 +1,82 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import mitosheet  # Import mitosheet library
+from mitosheet.streamlit.v1 import spreadsheet
 
-def main():
-    st.title("Financial Data Spreadsheet Automation")
+# Set page layout to wide
+st.set_page_config(layout="wide")
 
-    # Initialize an empty DataFrame
-    empty_df = pd.DataFrame()
+# Title with business context and emojis
+st.title("📊 Financial Data Cleaning and Analysis 📈")
 
-    # Display empty DataFrame as a table in Streamlit
-    st.write("Welcome to the Financial Data Spreadsheet Automation App!")
-    st.write("This app is designed to bridge the gap between profound human questions and quantitative research in the financial domain.")
-    st.write("From philosophers pondering the nature of value to data engineers optimizing algorithms, from CFOs making strategic decisions to investors managing portfolios, this app provides a continuum of tools.")
-    st.write("It empowers users to explore, analyze, and derive insights from financial data.")
-    st.write("Use it to bring quantitative research to life, whether you're an academic researcher or a CEO shaping investment strategies.")
+# Introduction explaining the app's purpose
+st.markdown("""
+This app empowers you to clean and analyze financial data efficiently. It performs data quality checks and guides you through the cleaning process using Mitosheet.
 
-    st.write("Empty Spreadsheet:")
-    
-    # Create an empty spreadsheet using mitosheet
-    empty_df = mitosheet.sheet(data=empty_df, key="empty_sheet")
-    
-    # Display the empty spreadsheet
-    st.dataframe(empty_df)
+To use the app:
+1. Click **📥 Import** > **Import Files** and select your financial data file (CSV or Excel).
+2. Configure the import settings.
+3. Utilize Mitosheet to clean and transform the data based on the prompts.
+4. 📥 Download the cleaned data for further analysis.
 
-    # Upload CSV or Excel file
-    uploaded_file = st.file_uploader("Choose a CSV or Excel file", type=["csv", "xlsx"])
+This app's goal is to go beyond the "what" and explore the "why" of financial data in real-time.
+""")
 
-    if uploaded_file is not None:
-        try:
-            # Read and display the uploaded data
-            if uploaded_file.name.endswith('.csv'):
-                df = pd.read_csv(uploaded_file)
-            elif uploaded_file.name.endswith('.xlsx'):
-                df = pd.read_excel(uploaded_file, engine='openpyxl')
+# List of data quality checks and prompts
+CHECKS_AND_PROMPTS = [
+    (
+        lambda df: df.columns[0] != 'issue date',
+        'Rename the first column to "issue date".',
+        'Double-click on the column name to edit it.'
+    ),
+    (
+        lambda df: df["issue date"].dtype != "datetime64[ns]",
+        'Change the data type of "issue date" to datetime.',
+        'Click the Filter icon, and select "datetime" from the dtype dropdown.'
+    ),
+    (
+        lambda df: df["issue date"].isnull().sum() > 0,
+        'Remove null values from the "issue date" column.',
+        'Use the filter icon in the column header and select "Is Not Empty".'
+    ),
+    (
+        lambda df: "Notes" in df.columns,
+        'Delete the "Notes" column (last column).',
+        'Select the column header and press Delete.'
+    ),
+    (
+        lambda df: df["term"].dtype != "int64",
+        'Extract the number of months from the "term" column.',
+        'Double-click on a cell in the column and write the formula `=INT(LEFT(term, 3))`.'
+    ),
+]
 
-            st.write("Uploaded Spreadsheet:")
-            
-            # Display the uploaded data using mitosheet
-            df = mitosheet.sheet(data=df, key="uploaded_sheet")
-            st.dataframe(df)
+# Function to run data checks and display prompts
+def run_data_checks_and_display_prompts(df):
+    for check, error_message, help_text in CHECKS_AND_PROMPTS:
+        if check(df):
+            st.error(error_message + " " + help_text)
+            return False
+    return True
 
-            # Perform basic statistical summaries using NumPy
-            if st.button("Show Basic Statistics"):
-                st.write("Mean of each column:")
-                st.write(np.mean(df))
+# Display Mitosheet for data cleaning
+st.write("💼 Financial Data Cleaning Spreadsheet:")
+dfs, _ = spreadsheet()
 
-                st.write("Standard Deviation of each column:")
-                st.write(np.std(df))
+# Check if data is imported
+if len(dfs) == 0:
+    st.info("Please import your financial data file to begin. Click **📥 Import** > **Import Files** and select your file.")
 
-                st.write("Correlation Matrix:")
-                st.write(np.corrcoef(df.values, rowvar=False))
+# Run data checks and prompts
+else:
+    df = list(dfs.values())[0]
+    checks_passed = run_data_checks_and_display_prompts(df)
 
-        except Exception as e:
-            st.write("There was an error loading the file.")
-            st.write(e)
-
-if __name__ == "__main__":
-    main()
+    if checks_passed:
+        st.success("✅ All checks passed! The data is clean and ready for download.")
+        
+        # Function to convert DataFrame to CSV
+        def convert_df_to_csv(df):
+            return df.to_csv(index=False).encode('utf-8')
+        
+        # Download button for cleaned data
+        cleaned_data_csv = convert_df_to_csv(df)
+        st.download_button("📥 Download Cleaned Data", cleaned_data_csv, "cleaned_data.csv", "text/csv")

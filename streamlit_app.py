@@ -5,65 +5,48 @@ from mitosheet.streamlit.v1 import spreadsheet
 st.set_page_config(layout="wide")
 
 # Title with business context and emojis
-st.title("📊 Financial Data Cleaning and Analysis 📈")
+st.title("📊 Data Cleanliness Verification 🧹")
 
 # Introduction explaining the app's purpose
 st.markdown("""
-This app empowers you to clean and analyze financial data efficiently. It performs data quality checks and guides you through the cleaning process using Mitosheet.
+This Streamlit App allows you to import data and clean it using the mitosheet library. The app is preconfigured with a set of data checks and prompts you to fix specific issues in the data.
 
-To use the app:
-1. Click **📥 Import** > **Import Files** and select your financial data file (CSV or Excel).
-2. Configure the import settings.
-3. Utilize Mitosheet to clean and transform the data based on the prompts.
-4. 📥 Download the cleaned data for further analysis.
+It ensures that your data has the following properties:
+- The first column is the issue date, and it's of type datetime.
+- The issue date column is a datetime column.
+- There are no null values in the issue date column.
+- The Notes column is not included in the dataframe.
+- The term column is an integer.
 
-This app's goal is to go beyond the "what" and explore the "why" of financial data in real-time.
+**Why is this app useful?**
+This app could be used in the first step of a data engineering pipeline. It allows data engineers to help data analysts ensure their data conforms to a specific schema before they continue their analysis.
+
+In this app, only if the user has fixed all of the issues in their data will they be able to export the data to a CSV file. You could update this app to export the data to a database instead.
+
+**Mito Streamlit Package**
+Learn more about the Mito Streamlit package [here](https://mitosheet.mitotec.io/docs/streamlit/) or follow the [getting started guide](https://mitosheet.mitotec.io/docs/streamlit/getting-started/).
+
+**Run Locally**
+1. Create a virtual environment:
+   ```python3 -m venv venv```
+2. Activate the virtual environment:
+   - macOS/Linux:
+     ```source venv/bin/activate```
+   - Windows:
+     ```venv\Scripts\activate```
+3. Install the required python packages:
+   ```pip install -r requirements.txt```
+4. Start the Streamlit app:
+   ```streamlit run main.py```
+
 """)
-
-# List of data quality checks and prompts
-CHECKS_AND_PROMPTS = [
-    (
-        lambda df: df.columns[0] != 'issue date',
-        'Rename the first column to "issue date".',
-        'Double-click on the column name to edit it.'
-    ),
-    (
-        lambda df: df["issue date"].dtype != "datetime64[ns]",
-        'Change the data type of "issue date" to datetime.',
-        'Click the Filter icon, and select "datetime" from the dtype dropdown.'
-    ),
-    (
-        lambda df: df["issue date"].isnull().sum() > 0,
-        'Remove null values from the "issue date" column.',
-        'Use the filter icon in the column header and select "Is Not Empty".'
-    ),
-    (
-        lambda df: "Notes" in df.columns,
-        'Delete the "Notes" column (last column).',
-        'Select the column header and press Delete.'
-    ),
-    (
-        lambda df: df["term"].dtype != "int64",
-        'Extract the number of months from the "term" column.',
-        'Double-click on a cell in the column and write the formula `=INT(LEFT(term, 3))`.'
-    ),
-]
-
-# Function to run data checks and display prompts
-def run_data_checks_and_display_prompts(df):
-    for check, error_message, help_text in CHECKS_AND_PROMPTS:
-        if check(df):
-            st.error(error_message + " " + help_text)
-            return False
-    return True
-
 # Display Mitosheet for data cleaning
-st.write("💼 Financial Data Cleaning Spreadsheet:")
+st.write("💼 Data Cleaning Spreadsheet:")
 dfs, _ = spreadsheet()
 
 # Check if data is imported
 if len(dfs) == 0:
-    st.info("Please import your financial data file to begin. Click **📥 Import** > **Import Files** and select your file.")
+    st.info("Please import your data file to begin. Click **📥 Import** > **Import Files** and select your file.")
 
 # Run data checks and prompts
 else:
@@ -80,3 +63,5 @@ else:
         # Download button for cleaned data
         cleaned_data_csv = convert_df_to_csv(df)
         st.download_button("📥 Download Cleaned Data", cleaned_data_csv, "cleaned_data.csv", "text/csv")
+
+        

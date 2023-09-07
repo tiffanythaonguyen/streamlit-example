@@ -38,8 +38,8 @@ Learn more about the Mito Streamlit package [here](https://mitosheet.mitotec.io/
    ```pip install -r requirements.txt```
 4. Start the Streamlit app:
    ```streamlit run main.py```
-
 """)
+
 # Display Mitosheet for data cleaning
 st.write("💼 Data Cleaning Spreadsheet:")
 dfs, _ = spreadsheet()
@@ -64,4 +64,5 @@ else:
         cleaned_data_csv = convert_df_to_csv(df)
         st.download_button("📥 Download Cleaned Data", cleaned_data_csv, "cleaned_data.csv", "text/csv")
 
-        
+# Link to the deployed app
+st.markdown("[View the deployed app here](https://tiffanythaonguyen-streamlit-example-streamlit-app-pia2qx.streamlit.app/)")
